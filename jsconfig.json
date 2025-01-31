@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+	  "moduleResolution": "node",
+	  "baseUrl": ".",
+	  "paths": {
+		"@components/*": ["src/components/*"]
+	  }
+	},
+	"exclude": [
+	  "node_modules",  // Exclude node_modules
+	  "build",          // Exclude build folder
+	  "dist",           // Exclude dist folder if it exists
+	  "public"          // Exclude public folder if it contains non-source files
+	]
+  }
