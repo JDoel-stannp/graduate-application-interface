@@ -1,18 +1,21 @@
-services:
-  mysql:
-    image: mysql:latest
-    container_name: my-mysql-db
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: grad_database
-      MYSQL_USER: myuser
-      MYSQL_PASSWORD: mypassword
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./mysql_config/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+version: "3.8"
 
-volumes:
-  mysql_data:
+services:
+  backend:
+    build: ./backend
+    container_name: php_backend
+    restart: always
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/var/www/html
+    environment:
+      DB_HOST: host.docker.internal  # Connect to local HeidiSQL DB
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: "Graduate Database"
+    depends_on:
+      - frontend # Keeps frontend as a service dependency (just for clarity, no effect)
+
+  # frontend remains outside of Docker
+  # No need to create a separate 'frontend' service here
