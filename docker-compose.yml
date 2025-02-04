@@ -12,7 +12,7 @@ services:
     volumes:
       - ./backend:/var/www
     ports:
-      - "8000:8000"      # We will run Laravel's built-in server on port 8000
+      - "8000:8000"
     depends_on:
       - mysql
     environment:
