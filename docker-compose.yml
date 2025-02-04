@@ -1,21 +1,44 @@
-version: "3.8"
+# docker-compose.yml
+version: '3.8'
 
 services:
-  backend:
-    build: ./backend
-    container_name: php_backend
-    restart: always
-    ports:
-      - "8000:80"
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: laravel-app
+    restart: unless-stopped
+    working_dir: /var/www
     volumes:
-      - ./backend:/var/www/html
-    environment:
-      DB_HOST: host.docker.internal  # Connect to local HeidiSQL DB
-      DB_USER: user
-      DB_PASSWORD: password
-      DB_NAME: "Graduate Database"
+      - ./backend:/var/www
+    ports:
+      - "8000:8000"      # We will run Laravel's built-in server on port 8000
     depends_on:
-      - frontend # Keeps frontend as a service dependency (just for clarity, no effect)
+      - mysql
+    environment:
+      APP_ENV: local
+      APP_DEBUG: 'true'
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: laravel
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
 
-  # frontend remains outside of Docker
-  # No need to create a separate 'frontend' service here
+  mysql:
+    image: mysql:8.0
+    container_name: laravel-mysql
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: rootsecret
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
